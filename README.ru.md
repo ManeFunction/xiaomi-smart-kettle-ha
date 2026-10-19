@@ -1,5 +1,7 @@
 # Xiaomi Smart Kettle 2 Pro для Home Assistant
 
+[English](README.md) | **Русский**
+
 [![GitHub release](https://img.shields.io/github/v/release/username-andrey/xiaomi-smart-kettle-ha)](https://github.com/username-andrey/xiaomi-smart-kettle-ha/releases)
 [![GitHub issues](https://img.shields.io/github/issues/username-andrey/xiaomi-smart-kettle-ha)](https://github.com/username-andrey/xiaomi-smart-kettle-ha/issues)
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-blue)](https://www.hacs.xyz/)
@@ -124,6 +126,19 @@
 ## Сообщения об ошибках и предложения
 
 Создавайте обращения в [GitHub Issues](https://github.com/username-andrey/xiaomi-smart-kettle-ha/issues). Укажите версию Home Assistant, версию интеграции, модель и прошивку чайника, шаги воспроизведения и обезличенный фрагмент журнала. **Удалите токены и другие секреты перед публикацией.**
+
+## Разработка
+
+Тесты используют [pytest-homeassistant-custom-component](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component) и имитацию чайника, поэтому им не нужны ни настоящее устройство, ни запущенный Home Assistant:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r requirements_test.txt
+.venv/bin/ruff format --check . && .venv/bin/ruff check .
+.venv/bin/pytest
+```
+
+Всё, что зависит от MIoT-спецификации чайника (адреса свойств, содержимое команд), находится в `custom_components/xiaomi_smart_kettle/protocol.py`.
 
 ## Статус проекта
 
