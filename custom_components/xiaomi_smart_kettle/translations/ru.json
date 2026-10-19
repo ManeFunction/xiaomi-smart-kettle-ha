@@ -64,7 +64,7 @@
     },
     "number": {
       "target_temperature": {
-        "name": "Целевая температура"
+        "name": "Температура нагрева"
       },
       "keep_warm_temperature": {
         "name": "Температура поддержания"

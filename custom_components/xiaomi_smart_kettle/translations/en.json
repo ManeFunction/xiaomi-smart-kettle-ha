@@ -64,7 +64,7 @@
     },
     "number": {
       "target_temperature": {
-        "name": "Target temperature"
+        "name": "Heat temperature"
       },
       "keep_warm_temperature": {
         "name": "Keep-warm temperature"

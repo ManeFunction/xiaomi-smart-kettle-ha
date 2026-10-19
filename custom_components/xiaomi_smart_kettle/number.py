@@ -63,7 +63,7 @@ class KettleNumber(KettleEntity, NumberEntity):
 
 
 class KettleHeatTargetNumber(KettleNumber):
-    """The target temperature, which keeps the heat target while the kettle boils."""
+    """The heat temperature, which keeps the heat target while the kettle boils."""
 
     @property
     def native_value(self) -> float | None:

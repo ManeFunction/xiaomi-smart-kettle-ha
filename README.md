@@ -18,7 +18,7 @@ The integration reads the kettle's Xiaomi miIO properties and creates these enti
 | Entity | Description |
 | --- | --- |
 | Water temperature | Current temperature of the water |
-| Target temperature | Temperature that **Heat** heats to (40–99 °C) |
+| Heat temperature | Temperature that **Heat** heats to (40–99 °C) |
 | Status | Standby, heating, boiling, cooling down or keeping warm |
 | Fault | Diagnostic code reported by the kettle |
 | Keep warm | Whether the kettle keeps the water warm afterwards |
@@ -28,7 +28,7 @@ The integration reads the kettle's Xiaomi miIO properties and creates these enti
 | Kettle lifted | Whether the kettle is off its base |
 | Other settings | Boiling and keep-warm notifications in the Mi Home app, remember temperature after lifting, do not disturb |
 | Boil | Button that starts boiling |
-| Heat | Button that heats the water to the target temperature |
+| Heat | Button that heats the water to the heat temperature |
 | Stop | Button that stops heating or boiling |
 
 > [!NOTE]
@@ -82,9 +82,9 @@ Do not copy the whole repository into `custom_components`, and do not add an ext
 
 ## Usage
 
-After setup, open the kettle device in Home Assistant. Its entities show the current and target temperature, the status, the keep-warm settings and diagnostic information.
+After setup, open the kettle device in Home Assistant. Its entities show the current and heat temperature, the status, the keep-warm settings and diagnostic information.
 
-The **Boil**, **Heat** and **Stop** buttons start and stop those modes from Home Assistant. **Heat** heats the water to the target temperature. Boiling does not change that target, so the next **Heat** after a **Boil** heats to your setting again. Both buttons send the current keep-warm settings along with the command.
+The **Boil**, **Heat** and **Stop** buttons start and stop those modes from Home Assistant. **Heat** heats the water to the heat temperature. Boiling does not change it, so the next **Heat** after a **Boil** heats to your setting again. Both buttons send the current keep-warm settings along with the command.
 
 The buttons have been confirmed to work on the test device. Try them on your own kettle before using them in automations. Do not run the kettle unattended, and do not bypass its built-in safety mechanisms.
 

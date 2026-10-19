@@ -11,8 +11,9 @@ All notable changes to this project are documented in this file. Commits follow 
 
 ### Bug Fixes
 
+* **number:** rename "Target temperature" to "Heat temperature", since it is the temperature the Heat button heats to (entity IDs of existing installs are unchanged)
 * **switch:** rename "Boiling reminder" and "Keep-warm reminder" to "Boiling notification" and "Keep-warm notification", which is what they control (entity IDs of existing installs are unchanged)
-* keep the heat target when Boil runs, so the next Heat heats to the target temperature instead of 99 °C and the "Target temperature" entity no longer jumps to 99
+* keep the heat target when Boil runs, so the next Heat heats to the heat temperature instead of 99 °C and the heat temperature entity no longer jumps to 99
 * re-read the keep-warm settings from the kettle right before Heat and Boil, and refuse to start instead of sending invented defaults when a setting is unknown
 * raise readable, translated errors when a command fails because the kettle is unreachable or rejects it
 * serialize requests to the kettle, so a poll and a command no longer collide on a message ID and time out
