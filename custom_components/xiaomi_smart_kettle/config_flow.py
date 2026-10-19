@@ -4,7 +4,7 @@ from typing import Any
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_TOKEN
-from miio import MiotDevice
+from miio import Device
 from miio.exceptions import DeviceException
 import voluptuous as vol
 
@@ -23,9 +23,7 @@ class XiaomiSmartKettleConfigFlow(ConfigFlow, domain=DOMAIN):
             host = user_input[CONF_HOST]
             token = user_input[CONF_TOKEN].strip()
             try:
-                info = await self.hass.async_add_executor_job(
-                    MiotDevice(host, token).info
-                )
+                info = await self.hass.async_add_executor_job(Device(host, token).info)
                 if info.model != MODEL:
                     errors["base"] = "unsupported_model"
                 else:

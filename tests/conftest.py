@@ -24,7 +24,7 @@ def device() -> Generator[FakeKettle]:
     """Replace the miIO device the coordinator talks to with a fake kettle."""
     fake = FakeKettle()
     with patch(
-        "custom_components.xiaomi_smart_kettle.coordinator.MiotDevice"
+        "custom_components.xiaomi_smart_kettle.coordinator.Device"
     ) as device_cls:
         device_cls.return_value.send = fake.send
         yield fake

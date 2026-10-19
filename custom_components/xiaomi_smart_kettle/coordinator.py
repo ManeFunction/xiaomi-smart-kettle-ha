@@ -10,7 +10,7 @@ from homeassistant.const import CONF_HOST, CONF_TOKEN
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-from miio import MiotDevice
+from miio import Device
 from miio.exceptions import DeviceException
 
 from .const import DOMAIN, UPDATE_INTERVAL_SECONDS
@@ -33,7 +33,7 @@ class KettleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             config_entry=entry,
         )
         self.host = entry.data[CONF_HOST]
-        self.kettle = Kettle(MiotDevice(self.host, entry.data[CONF_TOKEN]).send)
+        self.kettle = Kettle(Device(self.host, entry.data[CONF_TOKEN]).send)
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:

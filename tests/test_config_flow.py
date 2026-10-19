@@ -27,9 +27,7 @@ USER_INPUT = {CONF_HOST: HOST, CONF_TOKEN: f" {TOKEN} "}
 def info() -> Generator[MagicMock]:
     """Patch the device probe; set ``return_value`` or ``side_effect`` per test."""
     with (
-        patch(
-            "custom_components.xiaomi_smart_kettle.config_flow.MiotDevice"
-        ) as device_cls,
+        patch("custom_components.xiaomi_smart_kettle.config_flow.Device") as device_cls,
         patch(
             "custom_components.xiaomi_smart_kettle.async_setup_entry",
             return_value=True,
