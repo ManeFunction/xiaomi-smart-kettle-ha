@@ -1,8 +1,10 @@
+from typing import Any
+
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from .coordinator import KettleConfigEntry
 from .entity import KettleEntity
 
 DESCRIPTIONS = [
@@ -19,7 +21,9 @@ DESCRIPTIONS = [
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant,
+    entry: KettleConfigEntry,
+    async_add_entities: AddEntitiesCallback,
 ) -> None:
     async_add_entities(KettleSwitch(entry.runtime_data, d) for d in DESCRIPTIONS)
 
@@ -28,13 +32,13 @@ class KettleSwitch(KettleEntity, SwitchEntity):
     entity_description: SwitchEntityDescription
 
     @property
-    def is_on(self):
+    def is_on(self) -> bool:
         return bool(self.coordinator.data.get(self.entity_description.key))
 
-    async def async_turn_on(self, **kwargs):
+    async def async_turn_on(self, **kwargs: Any) -> None:
         await self.coordinator.async_set_properties({self.entity_description.key: True})
 
-    async def async_turn_off(self, **kwargs):
+    async def async_turn_off(self, **kwargs: Any) -> None:
         await self.coordinator.async_set_properties(
             {self.entity_description.key: False}
         )

@@ -18,9 +18,13 @@ from .protocol import Kettle, KettleError
 
 _LOGGER = logging.getLogger(__name__)
 
+type KettleConfigEntry = ConfigEntry[KettleCoordinator]
+
 
 class KettleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
-    def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
+    config_entry: KettleConfigEntry
+
+    def __init__(self, hass: HomeAssistant, entry: KettleConfigEntry) -> None:
         super().__init__(
             hass,
             _LOGGER,

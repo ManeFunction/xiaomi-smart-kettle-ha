@@ -1,9 +1,9 @@
 from homeassistant.components.number import NumberEntity, NumberEntityDescription
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature, UnitOfTime
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from .coordinator import KettleConfigEntry
 from .entity import KettleEntity
 
 DESCRIPTIONS = [
@@ -35,7 +35,9 @@ DESCRIPTIONS = [
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant,
+    entry: KettleConfigEntry,
+    async_add_entities: AddEntitiesCallback,
 ) -> None:
     async_add_entities(KettleNumber(entry.runtime_data, d) for d in DESCRIPTIONS)
 
@@ -44,7 +46,7 @@ class KettleNumber(KettleEntity, NumberEntity):
     entity_description: NumberEntityDescription
 
     @property
-    def native_value(self):
+    def native_value(self) -> float | None:
         return self.coordinator.data.get(self.entity_description.key)
 
     async def async_set_native_value(self, value: float) -> None:

@@ -2,11 +2,10 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 
 from homeassistant.components.button import ButtonEntity, ButtonEntityDescription
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .coordinator import KettleCoordinator
+from .coordinator import KettleConfigEntry, KettleCoordinator
 from .entity import KettleEntity
 
 
@@ -38,7 +37,9 @@ DESCRIPTIONS = [
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant,
+    entry: KettleConfigEntry,
+    async_add_entities: AddEntitiesCallback,
 ) -> None:
     async_add_entities(KettleButton(entry.runtime_data, d) for d in DESCRIPTIONS)
 
