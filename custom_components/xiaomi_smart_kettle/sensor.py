@@ -1,3 +1,7 @@
+from collections.abc import Callable
+from dataclasses import dataclass
+from typing import Any
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -10,19 +14,30 @@ from homeassistant.helpers.typing import StateType
 
 from .coordinator import KettleConfigEntry
 from .entity import KettleEntity
+from .protocol import STATUSES
 
-STATUS = {0: "standby", 1: "heating", 2: "boiling", 3: "cooling", 4: "keep_warm"}
+
+@dataclass(frozen=True, kw_only=True)
+class KettleSensorDescription(SensorEntityDescription):
+    value_fn: Callable[[Any], StateType] = lambda value: value
+
 
 DESCRIPTIONS = [
-    SensorEntityDescription(
+    KettleSensorDescription(
         key="temperature",
         translation_key="temperature",
         device_class=SensorDeviceClass.TEMPERATURE,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
     ),
-    SensorEntityDescription(key="status", translation_key="status"),
-    SensorEntityDescription(key="fault", translation_key="fault"),
-    SensorEntityDescription(
+    KettleSensorDescription(
+        key="status",
+        translation_key="status",
+        device_class=SensorDeviceClass.ENUM,
+        options=list(STATUSES.values()),
+        value_fn=STATUSES.get,
+    ),
+    KettleSensorDescription(key="fault", translation_key="fault"),
+    KettleSensorDescription(
         key="warming_time",
         translation_key="warming_time",
         native_unit_of_measurement=UnitOfTime.MINUTES,
@@ -39,11 +54,9 @@ async def async_setup_entry(
 
 
 class KettleSensor(KettleEntity, SensorEntity):
-    entity_description: SensorEntityDescription
+    entity_description: KettleSensorDescription
 
     @property
     def native_value(self) -> StateType:
         value = self.coordinator.data.get(self.entity_description.key)
-        if self.entity_description.key == "status" and value is not None:
-            return STATUS.get(value, f"unknown_{value}")
-        return value
+        return self.entity_description.value_fn(value)

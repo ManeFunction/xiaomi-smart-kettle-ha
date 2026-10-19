@@ -56,6 +56,8 @@ READ_BATCH_SIZE = 5
 
 STOP_WORK = (3, 1)  # (siid, aiid)
 
+STATUSES = {0: "standby", 1: "heating", 2: "boiling", 3: "cooling", 4: "keep_warm"}
+
 HEAT_TARGET_MODE = 0
 BOIL_TARGET_MODE = 1
 BOIL_TEMPERATURE = 99

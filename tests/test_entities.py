@@ -68,6 +68,25 @@ async def test_unreported_values_are_unknown(
         assert hass.states.get(entity_id).state == STATE_UNKNOWN
 
 
+@pytest.mark.parametrize(("raw", "state"), [(4, "keep_warm"), (9, STATE_UNKNOWN)])
+async def test_status_is_an_enum(
+    hass: HomeAssistant, device: FakeKettle, setup_integration, raw: int, state: str
+) -> None:
+    device.state[(2, 1)] = raw
+
+    await setup_integration.runtime_data.async_refresh()
+
+    status = hass.states.get(f"sensor.{PREFIX}_status")
+    assert status.state == state
+    assert status.attributes["options"] == [
+        "standby",
+        "heating",
+        "boiling",
+        "cooling",
+        "keep_warm",
+    ]
+
+
 async def test_unique_ids(
     hass: HomeAssistant, entity_registry: er.EntityRegistry
 ) -> None:

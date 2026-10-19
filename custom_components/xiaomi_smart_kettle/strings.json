@@ -21,7 +21,14 @@
         "name": "Water temperature"
       },
       "status": {
-        "name": "Status"
+        "name": "Status",
+        "state": {
+          "standby": "Standby",
+          "heating": "Heating",
+          "boiling": "Boiling",
+          "cooling": "Cooling down",
+          "keep_warm": "Keeping warm"
+        }
       },
       "fault": {
         "name": "Fault"
