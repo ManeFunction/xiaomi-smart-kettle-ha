@@ -39,10 +39,6 @@ async def async_setup_entry(
 class KettleSensor(KettleEntity, SensorEntity):
     entity_description: SensorEntityDescription
 
-    def __init__(self, coordinator, description):
-        super().__init__(coordinator, description.key)
-        self.entity_description = description
-
     @property
     def native_value(self):
         value = self.coordinator.data.get(self.entity_description.key)

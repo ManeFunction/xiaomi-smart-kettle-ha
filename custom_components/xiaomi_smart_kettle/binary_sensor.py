@@ -24,10 +24,6 @@ async def async_setup_entry(
 class KettleBinarySensor(KettleEntity, BinarySensorEntity):
     entity_description: BinarySensorEntityDescription
 
-    def __init__(self, coordinator, description):
-        super().__init__(coordinator, description.key)
-        self.entity_description = description
-
     @property
     def is_on(self):
         return bool(self.coordinator.data.get(self.entity_description.key))

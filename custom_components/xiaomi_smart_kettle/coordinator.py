@@ -33,7 +33,6 @@ class KettleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.device = MiotDevice(self.host, self.token)
         self.kettle = Kettle(self.device.send)
         self.model = "xiaomi.kettle.v20"
-        self.mac = entry.unique_id
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
