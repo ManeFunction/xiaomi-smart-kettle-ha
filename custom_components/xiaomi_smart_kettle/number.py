@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 from homeassistant.components.number import NumberEntity, NumberEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
@@ -8,39 +6,26 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .entity import KettleEntity
 
-
-@dataclass(frozen=True, kw_only=True)
-class KettleNumberDescription(NumberEntityDescription):
-    siid: int
-    piid: int
-
-
 DESCRIPTIONS = [
-    KettleNumberDescription(
+    NumberEntityDescription(
         key="target_temperature",
         translation_key="target_temperature",
-        siid=2,
-        piid=4,
         native_min_value=40,
         native_max_value=99,
         native_step=1,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
     ),
-    KettleNumberDescription(
+    NumberEntityDescription(
         key="keep_warm_temperature",
         translation_key="keep_warm_temperature",
-        siid=2,
-        piid=6,
         native_min_value=40,
         native_max_value=90,
         native_step=1,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
     ),
-    KettleNumberDescription(
+    NumberEntityDescription(
         key="keep_warm_time",
         translation_key="keep_warm_time",
-        siid=3,
-        piid=1,
         native_min_value=60,
         native_max_value=1440,
         native_step=30,
@@ -56,7 +41,7 @@ async def async_setup_entry(
 
 
 class KettleNumber(KettleEntity, NumberEntity):
-    entity_description: KettleNumberDescription
+    entity_description: NumberEntityDescription
 
     def __init__(self, coordinator, description):
         super().__init__(coordinator, description.key)
@@ -67,6 +52,6 @@ class KettleNumber(KettleEntity, NumberEntity):
         return self.coordinator.data.get(self.entity_description.key)
 
     async def async_set_native_value(self, value: float) -> None:
-        await self.coordinator.async_set_property(
-            self.entity_description.siid, self.entity_description.piid, int(value)
+        await self.coordinator.async_set_properties(
+            {self.entity_description.key: int(value)}
         )

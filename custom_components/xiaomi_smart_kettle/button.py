@@ -48,4 +48,4 @@ class KettleStopButton(KettleEntity, ButtonEntity):
         super().__init__(coordinator, "stop")
 
     async def async_press(self) -> None:
-        await self.coordinator.async_action(3, 1)
+        await self.coordinator.async_stop()
