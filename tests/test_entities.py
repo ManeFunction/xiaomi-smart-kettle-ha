@@ -51,7 +51,7 @@ async def test_every_entity_value_is_polled(
     keys = {
         entry.unique_id.removeprefix(f"{UNIQUE_ID}_")
         for entry in entries
-        if entry.domain != "button"
+        if entry.domain not in ("button", "water_heater")
     }
     assert keys <= set(POLLED)
 

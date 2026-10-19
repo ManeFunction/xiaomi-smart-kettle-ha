@@ -17,6 +17,7 @@ The integration reads the kettle's Xiaomi miIO properties and creates these enti
 
 | Entity | Description |
 | --- | --- |
+| Kettle | Water heater: current water temperature, heat temperature, on starts **Heat**, off presses **Stop**; the state shows heating, boiling, cooling down or keeping warm |
 | Water temperature | Current temperature of the water |
 | Heat temperature | Temperature that **Heat** heats to (40–99 °C) |
 | Status | Standby, heating, boiling, cooling down or keeping warm |
@@ -87,6 +88,19 @@ After setup, open the kettle device in Home Assistant. Its entities show the cur
 The **Boil**, **Heat** and **Stop** buttons start and stop those modes from Home Assistant. **Heat** heats the water to the heat temperature. Boiling does not change it, so the next **Heat** after a **Boil** heats to your setting again. Both buttons send the current keep-warm settings along with the command.
 
 The buttons have been confirmed to work on the test device. Try them on your own kettle before using them in automations. Do not run the kettle unattended, and do not bypass its built-in safety mechanisms.
+
+## Apple Home
+
+Expose the kettle to Apple Home with Home Assistant's [HomeKit Bridge](https://www.home-assistant.io/integrations/homekit/):
+
+- **Kettle** (`water_heater.…`) appears as a thermostat. The tile shows the water temperature, the dial sets the heat temperature (40–99 °C), **Heat** starts heating and **Off** stops the kettle.
+- **Boil** (`button.…_boil`) appears as a switch that turns itself off after it runs.
+- **Keep warm** (`switch.…_keep_warm`) appears as a switch.
+
+The settings under *Configuration* (notifications, do not disturb, remember temperature after lifting) are left out of the bridge unless you include them explicitly.
+
+> [!NOTE]
+> Apple Home has no kettle device type, so the tile shows **Heat** whenever the kettle is heating, boiling, cooling down or keeping warm. The mapping was checked against the HomeKit Bridge of Home Assistant 2026.10. Whether the Home app's dial offers the full 40–99 °C range has not been checked on an iPhone yet.
 
 ## Troubleshooting
 

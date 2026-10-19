@@ -64,6 +64,10 @@ STOP_WORK = (3, 1)  # (siid, aiid)
 
 STATUSES = {0: "standby", 1: "heating", 2: "boiling", 3: "cooling", 4: "keep_warm"}
 
+# Range of target-temperature (2.4), which is the heat target outside boil mode
+HEAT_TEMPERATURE_MIN = 40
+HEAT_TEMPERATURE_MAX = 99
+
 HEAT_TARGET_MODE = 0
 BOIL_TARGET_MODE = 1
 BOIL_TEMPERATURE = 99

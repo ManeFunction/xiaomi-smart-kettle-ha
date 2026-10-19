@@ -83,6 +83,17 @@
       "stop": {
         "name": "Stop"
       }
+    },
+    "water_heater": {
+      "kettle": {
+        "state": {
+          "off": "Off",
+          "heating": "Heating",
+          "boiling": "Boiling",
+          "cooling": "Cooling down",
+          "keep_warm": "Keeping warm"
+        }
+      }
     }
   },
   "exceptions": {

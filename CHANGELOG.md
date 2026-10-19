@@ -6,6 +6,7 @@ All notable changes to this project are documented in this file. Commits follow 
 
 ### Features
 
+* **water_heater:** add a Kettle water heater entity for Home Assistant's water heater card and the HomeKit bridge: it shows the water temperature and status, its target is the heat temperature (40–99 °C), turning it on starts Heat and turning it off stops the kettle
 * **sensor:** expose the kettle status as an enum sensor with translated states (standby, heating, boiling, cooling down, keeping warm)
 * **switch:** move the remember-temperature, boiling notification, keep-warm notification and do-not-disturb switches to the device's Configuration section, which also keeps them off auto-generated dashboards and out of the HomeKit bridge by default
 

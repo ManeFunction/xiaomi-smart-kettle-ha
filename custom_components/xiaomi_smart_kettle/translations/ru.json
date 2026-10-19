@@ -83,6 +83,17 @@
       "stop": {
         "name": "Остановить"
       }
+    },
+    "water_heater": {
+      "kettle": {
+        "state": {
+          "off": "Выключен",
+          "heating": "Нагрев",
+          "boiling": "Кипячение",
+          "cooling": "Остывание",
+          "keep_warm": "Поддержание температуры"
+        }
+      }
     }
   },
   "exceptions": {

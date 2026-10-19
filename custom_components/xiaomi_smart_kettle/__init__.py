@@ -9,6 +9,7 @@ PLATFORMS = [
     Platform.SWITCH,
     Platform.NUMBER,
     Platform.BUTTON,
+    Platform.WATER_HEATER,
 ]
 
 
