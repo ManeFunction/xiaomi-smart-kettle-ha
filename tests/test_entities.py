@@ -169,6 +169,18 @@ async def test_command_reports_rejection(
     assert err.value.translation_key == "command_rejected"
 
 
+async def test_heat_refuses_when_settings_are_unknown(
+    hass: HomeAssistant, device: FakeKettle
+) -> None:
+    device.failing_reads.add((2, 6))
+
+    with pytest.raises(HomeAssistantError) as err:
+        await _press(hass, "heat")
+
+    assert err.value.translation_key == "state_unknown"
+    assert device.sent("set_properties") == []
+
+
 async def _press(hass: HomeAssistant, key: str) -> None:
     await hass.services.async_call(
         BUTTON_DOMAIN,

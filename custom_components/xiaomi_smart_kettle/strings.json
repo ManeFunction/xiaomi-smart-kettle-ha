@@ -88,6 +88,9 @@
     },
     "command_rejected": {
       "message": "The kettle rejected the command: {result}"
+    },
+    "state_unknown": {
+      "message": "The kettle did not report {properties}. Try again in a few seconds."
     }
   }
 }

@@ -13,6 +13,7 @@ from custom_components.xiaomi_smart_kettle.protocol import (
     READ_BATCH_SIZE,
     Kettle,
     KettleError,
+    KettleStateError,
 )
 
 from .fake_kettle import FakeKettle
@@ -113,7 +114,7 @@ def test_requests_never_overlap(device: FakeKettle) -> None:
 
 
 def test_start_heat_payload(device: FakeKettle, kettle: Kettle) -> None:
-    kettle.start_heat(kettle.read())
+    kettle.start_heat()
 
     assert device.sent("set_properties") == [
         [
@@ -129,7 +130,7 @@ def test_start_heat_payload(device: FakeKettle, kettle: Kettle) -> None:
 
 def test_start_boil_payload(device: FakeKettle, kettle: Kettle) -> None:
     device.state[(2, 5)] = False
-    kettle.start_boil(kettle.read())
+    kettle.start_boil()
 
     assert device.sent("set_properties") == [
         [
@@ -141,3 +142,26 @@ def test_start_boil_payload(device: FakeKettle, kettle: Kettle) -> None:
             {"did": "3-13", "siid": 3, "piid": 13, "value": "99,0,50,720"},
         ]
     ]
+
+
+def test_start_uses_fresh_settings(device: FakeKettle, kettle: Kettle) -> None:
+    kettle.read()
+    device.state[(2, 6)] = 60  # changed in the Mi Home app after the poll
+
+    kettle.start_boil()
+
+    [payload] = device.sent("set_properties")
+    assert payload[-1]["value"] == "99,1,60,720"
+
+
+@pytest.mark.parametrize("start", [Kettle.start_heat, Kettle.start_boil])
+def test_start_refuses_without_settings(
+    device: FakeKettle, kettle: Kettle, start
+) -> None:
+    device.failing_reads.add((3, 1))
+
+    with pytest.raises(KettleStateError) as err:
+        start(kettle)
+
+    assert err.value.missing == ["keep_warm_time"]
+    assert device.sent("set_properties") == []

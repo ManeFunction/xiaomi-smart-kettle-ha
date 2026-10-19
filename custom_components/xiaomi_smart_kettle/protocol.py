@@ -54,6 +54,13 @@ POLLED = (
     "no_disturb",
 )
 READ_BATCH_SIZE = 5
+# Properties Heat and Boil send back to the kettle unchanged
+START_INPUTS = (
+    "target_temperature",
+    "auto_keep_warm",
+    "keep_warm_temperature",
+    "keep_warm_time",
+)
 
 STOP_WORK = (3, 1)  # (siid, aiid)
 
@@ -74,6 +81,14 @@ class KettleRejectedError(KettleError):
     def __init__(self, request: str, result: Any) -> None:
         super().__init__(f"Kettle rejected {request}: {result}")
         self.result = result
+
+
+class KettleStateError(KettleError):
+    """The kettle did not report properties a command needs."""
+
+    def __init__(self, missing: list[str]) -> None:
+        super().__init__(f"Kettle did not report {', '.join(missing)}")
+        self.missing = missing
 
 
 class Kettle:
@@ -116,21 +131,35 @@ class Kettle:
         with self._lock:
             return self._send(method, params)
 
-    def start_heat(self, state: Mapping[str, Any]) -> None:
+    def start_heat(self) -> None:
         """Heat to the target temperature with the current keep-warm settings."""
-        target = int(state.get("target_temperature", 80))
+        state = self._read_start_inputs()
+        target = int(state["target_temperature"])
         self._start(state, target, HEAT_TARGET_MODE, "heat_mode")
 
-    def start_boil(self, state: Mapping[str, Any]) -> None:
+    def start_boil(self) -> None:
         """Boil with the current keep-warm settings."""
+        state = self._read_start_inputs()
         self._start(state, BOIL_TEMPERATURE, BOIL_TARGET_MODE, "boil_mode")
+
+    def _read_start_inputs(self) -> dict[str, Any]:
+        """Read the settings Heat and Boil resend, fresh from the kettle.
+
+        A cached poll can be seconds old and would undo a change made in the
+        Mi Home app or on the kettle in the meantime.
+        """
+        state = self.read(START_INPUTS)
+        missing = [name for name in START_INPUTS if state.get(name) is None]
+        if missing:
+            raise KettleStateError(missing)
+        return state
 
     def _start(
         self, state: Mapping[str, Any], target: int, target_mode: int, mode: str
     ) -> None:
-        keep_warm = bool(state.get("auto_keep_warm", True))
-        keep_temp = int(state.get("keep_warm_temperature", 45))
-        keep_time = int(state.get("keep_warm_time", 1440))
+        keep_warm = bool(state["auto_keep_warm"])
+        keep_temp = int(state["keep_warm_temperature"])
+        keep_time = int(state["keep_warm_time"])
         self.write(
             {
                 "target_temperature": target,

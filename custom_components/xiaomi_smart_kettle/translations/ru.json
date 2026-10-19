@@ -88,6 +88,9 @@
     },
     "command_rejected": {
       "message": "Чайник отклонил команду: {result}"
+    },
+    "state_unknown": {
+      "message": "Чайник не сообщил значения {properties}. Повторите попытку через несколько секунд."
     }
   }
 }

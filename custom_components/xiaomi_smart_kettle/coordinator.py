@@ -14,7 +14,7 @@ from miio import MiotDevice
 from miio.exceptions import DeviceException
 
 from .const import DOMAIN, UPDATE_INTERVAL_SECONDS
-from .protocol import Kettle, KettleRejectedError
+from .protocol import Kettle, KettleRejectedError, KettleStateError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,10 +47,10 @@ class KettleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         await self._async_run(self.kettle.write, values)
 
     async def async_start_heat(self) -> None:
-        await self._async_run(self.kettle.start_heat, self.data)
+        await self._async_run(self.kettle.start_heat)
 
     async def async_start_boil(self) -> None:
-        await self._async_run(self.kettle.start_boil, self.data)
+        await self._async_run(self.kettle.start_boil)
 
     async def async_stop(self) -> None:
         await self._async_run(self.kettle.stop)
@@ -70,5 +70,11 @@ class KettleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 translation_domain=DOMAIN,
                 translation_key="command_rejected",
                 translation_placeholders={"result": str(err.result)},
+            ) from err
+        except KettleStateError as err:
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="state_unknown",
+                translation_placeholders={"properties": ", ".join(err.missing)},
             ) from err
         await self.async_request_refresh()
