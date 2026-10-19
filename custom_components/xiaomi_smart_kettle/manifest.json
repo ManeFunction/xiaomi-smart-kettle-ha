@@ -9,5 +9,5 @@
   "issue_tracker": "https://github.com/username-andrey/xiaomi-smart-kettle-ha/issues",
   "loggers": ["miio"],
   "requirements": ["python-miio==0.5.12"],
-  "version": "0.2.2"
+  "version": "0.3.0"
 }
