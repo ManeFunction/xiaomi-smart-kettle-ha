@@ -4,6 +4,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN
 from .coordinator import KettleCoordinator
 
+
 class KettleEntity(CoordinatorEntity[KettleCoordinator]):
     _attr_has_entity_name = True
 
