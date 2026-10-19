@@ -42,7 +42,11 @@
     },
     "binary_sensor": {
       "kettle_lifting": {
-        "name": "Kettle lifted"
+        "name": "Kettle lifted",
+        "state": {
+          "on": "Lifted",
+          "off": "On base"
+        }
       }
     },
     "switch": {

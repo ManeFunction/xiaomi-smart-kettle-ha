@@ -42,7 +42,11 @@
     },
     "binary_sensor": {
       "kettle_lifting": {
-        "name": "Чайник снят с базы"
+        "name": "Чайник снят с базы",
+        "state": {
+          "on": "Снят",
+          "off": "На базе"
+        }
       }
     },
     "switch": {

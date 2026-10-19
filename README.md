@@ -96,6 +96,7 @@ Expose the kettle to Apple Home with Home Assistant's [HomeKit Bridge](https://w
 - **Kettle** (`water_heater.…`) appears as a thermostat. The tile shows the water temperature, the dial sets the heat temperature (40–99 °C), **Heat** starts heating and **Off** stops the kettle.
 - **Boil** (`button.…_boil`) appears as a switch that turns itself off after it runs.
 - **Keep warm** (`switch.…_keep_warm`) appears as a switch.
+- **Kettle lifted** (`binary_sensor.…_kettle_lifted`) appears as a contact sensor that is open while the kettle is off its base.
 
 The settings under *Configuration* (notifications, do not disturb, remember temperature after lifting) are left out of the bridge unless you include them explicitly.
 

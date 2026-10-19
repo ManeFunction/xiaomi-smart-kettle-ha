@@ -106,6 +106,12 @@ async def test_settings_are_configuration_entities(
         assert category(f"switch.{PREFIX}_{name}") is EntityCategory.CONFIG
 
 
+async def test_kettle_lifted_is_an_opening(hass: HomeAssistant) -> None:
+    state = hass.states.get(f"binary_sensor.{PREFIX}_kettle_lifted")
+
+    assert state.attributes["device_class"] == "opening"
+
+
 async def test_unique_ids(
     hass: HomeAssistant, entity_registry: er.EntityRegistry
 ) -> None:

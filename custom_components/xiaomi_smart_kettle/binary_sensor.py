@@ -1,4 +1,5 @@
 from homeassistant.components.binary_sensor import (
+    BinarySensorDeviceClass,
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
@@ -9,8 +10,13 @@ from .coordinator import KettleConfigEntry
 from .entity import KettleEntity
 
 DESCRIPTIONS = [
+    # Without a device class the HomeKit bridge exposes a binary sensor as an
+    # occupancy sensor. As an opening, Apple Home shows a contact sensor that is
+    # open while the kettle is off its base.
     BinarySensorEntityDescription(
-        key="kettle_lifting", translation_key="kettle_lifting"
+        key="kettle_lifting",
+        translation_key="kettle_lifting",
+        device_class=BinarySensorDeviceClass.OPENING,
     )
 ]
 
