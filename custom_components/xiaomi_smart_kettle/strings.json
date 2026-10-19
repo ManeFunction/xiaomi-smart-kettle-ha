@@ -81,5 +81,13 @@
         "name": "Stop"
       }
     }
+  },
+  "exceptions": {
+    "cannot_communicate": {
+      "message": "Cannot reach the kettle at {host}: {error}"
+    },
+    "command_rejected": {
+      "message": "The kettle rejected the command: {result}"
+    }
   }
 }

@@ -17,7 +17,9 @@ from homeassistant.const import (
     STATE_UNKNOWN,
 )
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_registry as er
+from miio.exceptions import DeviceException
 import pytest
 
 from custom_components.xiaomi_smart_kettle.protocol import POLLED
@@ -142,6 +144,29 @@ async def test_stop_button(hass: HomeAssistant, device: FakeKettle) -> None:
     assert device.sent("action") == [
         {"did": "action-3-1", "siid": 3, "aiid": 1, "in": []}
     ]
+
+
+async def test_command_reports_unreachable_kettle(
+    hass: HomeAssistant, device: FakeKettle
+) -> None:
+    device.error = DeviceException("timeout")
+
+    with pytest.raises(HomeAssistantError) as err:
+        await _press(hass, "stop")
+
+    assert err.value.translation_key == "cannot_communicate"
+    assert str(err.value) == "Cannot reach the kettle at 192.168.1.50: timeout"
+
+
+async def test_command_reports_rejection(
+    hass: HomeAssistant, device: FakeKettle
+) -> None:
+    device.reject_code = -4004
+
+    with pytest.raises(HomeAssistantError) as err:
+        await _press(hass, "stop")
+
+    assert err.value.translation_key == "command_rejected"
 
 
 async def _press(hass: HomeAssistant, key: str) -> None:

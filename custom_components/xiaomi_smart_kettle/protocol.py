@@ -64,7 +64,15 @@ BOIL_TEMPERATURE = 99
 
 
 class KettleError(Exception):
-    """The kettle rejected a request."""
+    """A kettle request could not be completed."""
+
+
+class KettleRejectedError(KettleError):
+    """The kettle answered a request with an error code."""
+
+    def __init__(self, request: str, result: Any) -> None:
+        super().__init__(f"Kettle rejected {request}: {result}")
+        self.result = result
 
 
 class Kettle:
@@ -136,4 +144,4 @@ def _check(result: Any, what: str) -> None:
     """Raise unless every item of a miIO result reports code 0."""
     items = result if isinstance(result, list) else [result]
     if not items or any(not isinstance(i, dict) or i.get("code") != 0 for i in items):
-        raise KettleError(f"Kettle rejected {what}: {result}")
+        raise KettleRejectedError(what, result)

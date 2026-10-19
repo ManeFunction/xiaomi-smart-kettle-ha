@@ -14,7 +14,7 @@ from miio import MiotDevice
 from miio.exceptions import DeviceException
 
 from .const import DOMAIN, UPDATE_INTERVAL_SECONDS
-from .protocol import Kettle, KettleError
+from .protocol import Kettle, KettleRejectedError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -59,6 +59,16 @@ class KettleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Run a kettle command in the executor, then refresh the state."""
         try:
             await self.hass.async_add_executor_job(command, *args)
-        except KettleError as err:
-            raise HomeAssistantError(str(err)) from err
+        except DeviceException as err:
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="cannot_communicate",
+                translation_placeholders={"host": self.host, "error": str(err)},
+            ) from err
+        except KettleRejectedError as err:
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="command_rejected",
+                translation_placeholders={"result": str(err.result)},
+            ) from err
         await self.async_request_refresh()

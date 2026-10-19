@@ -81,5 +81,13 @@
         "name": "Остановить"
       }
     }
+  },
+  "exceptions": {
+    "cannot_communicate": {
+      "message": "Не удалось связаться с чайником {host}: {error}"
+    },
+    "command_rejected": {
+      "message": "Чайник отклонил команду: {result}"
+    }
   }
 }
