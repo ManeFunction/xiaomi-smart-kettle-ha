@@ -44,6 +44,6 @@ class KettleSensor(KettleEntity, SensorEntity):
     @property
     def native_value(self) -> StateType:
         value = self.coordinator.data.get(self.entity_description.key)
-        if self.entity_description.key == "status":
+        if self.entity_description.key == "status" and value is not None:
             return STATUS.get(value, f"unknown_{value}")
         return value

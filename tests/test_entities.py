@@ -9,7 +9,13 @@ from homeassistant.components.number import (
     SERVICE_SET_VALUE,
 )
 from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
-from homeassistant.const import ATTR_ENTITY_ID, SERVICE_TURN_ON, STATE_OFF, STATE_ON
+from homeassistant.const import (
+    ATTR_ENTITY_ID,
+    SERVICE_TURN_ON,
+    STATE_OFF,
+    STATE_ON,
+    STATE_UNKNOWN,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 import pytest
@@ -45,6 +51,21 @@ async def test_every_entity_value_is_polled(
         if entry.domain != "button"
     }
     assert keys <= set(POLLED)
+
+
+async def test_unreported_values_are_unknown(
+    hass: HomeAssistant, device: FakeKettle, setup_integration
+) -> None:
+    device.failing_reads |= {(2, 1), (3, 7), (6, 1)}
+
+    await setup_integration.runtime_data.async_refresh()
+
+    for entity_id in (
+        f"sensor.{PREFIX}_status",
+        f"binary_sensor.{PREFIX}_kettle_lifted",
+        f"switch.{PREFIX}_do_not_disturb",
+    ):
+        assert hass.states.get(entity_id).state == STATE_UNKNOWN
 
 
 async def test_unique_ids(

@@ -27,5 +27,6 @@ class KettleBinarySensor(KettleEntity, BinarySensorEntity):
     entity_description: BinarySensorEntityDescription
 
     @property
-    def is_on(self) -> bool:
-        return bool(self.coordinator.data.get(self.entity_description.key))
+    def is_on(self) -> bool | None:
+        value = self.coordinator.data.get(self.entity_description.key)
+        return None if value is None else bool(value)
