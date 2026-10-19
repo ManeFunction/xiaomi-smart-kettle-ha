@@ -1,5 +1,3 @@
 DOMAIN = "xiaomi_smart_kettle"
-CONF_TOKEN = "token"
-MODEL = "xiaomi.kettle.v20"
-PLATFORMS = ["sensor", "binary_sensor", "switch", "number", "button"]
+DEVICE_NAME = "Xiaomi Smart Kettle 2 Pro"
 UPDATE_INTERVAL_SECONDS = 5

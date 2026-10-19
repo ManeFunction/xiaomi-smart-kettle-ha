@@ -15,6 +15,8 @@ from typing import Any
 
 type Send = Callable[[str, Any], Any]
 
+MODEL = "xiaomi.kettle.v20"
+
 # name -> (siid, piid)
 PROPERTIES: dict[str, tuple[int, int]] = {
     "status": (2, 1),

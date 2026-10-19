@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from homeassistant import config_entries
-from homeassistant.const import CONF_HOST
+from homeassistant.const import CONF_HOST, CONF_TOKEN
 from homeassistant.data_entry_flow import FlowResult
 from miio import MiotDevice
 from miio.exceptions import DeviceException
 import voluptuous as vol
 
-from .const import CONF_TOKEN, DOMAIN, MODEL
+from .const import DEVICE_NAME, DOMAIN
+from .protocol import MODEL
 
 
 class XiaomiSmartKettleConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -37,7 +38,7 @@ class XiaomiSmartKettleConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         updates={CONF_HOST: host, CONF_TOKEN: token}
                     )
                     return self.async_create_entry(
-                        title="Xiaomi Smart Kettle 2 Pro",
+                        title=DEVICE_NAME,
                         data={CONF_HOST: host, CONF_TOKEN: token},
                     )
             except (DeviceException, ValueError, OSError):
