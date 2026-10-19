@@ -1,0 +1,71 @@
+# Changelog
+
+All notable changes to this project are documented in this file. Commits follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/), and the versions follow [Semantic Versioning](https://semver.org/).
+
+## Unreleased
+
+### Features
+
+* **sensor:** expose the kettle status as an enum sensor with translated states (standby, heating, boiling, cooling down, keeping warm)
+
+### Bug Fixes
+
+* keep the heat target when Boil runs, so the next Heat heats to the target temperature instead of 99 °C and the "Target temperature" entity no longer jumps to 99
+* re-read the keep-warm settings from the kettle right before Heat and Boil, and refuse to start instead of sending invented defaults when a setting is unknown
+* raise readable, translated errors when a command fails because the kettle is unreachable or rejects it
+* serialize requests to the kettle, so a poll and a command no longer collide on a message ID and time out
+* show unreported values as unknown instead of off or the literal state `unknown_None`
+* use `miio.Device` so python-miio no longer logs a mapping warning on every setup and config-flow submit
+* **config_flow:** add a translated message for an already configured kettle
+
+### Performance Improvements
+
+* poll only the 15 properties the integration uses, in 3 round trips every 5 s instead of 7
+
+### Code Refactoring
+
+* move the MIoT protocol (property addresses, requests and the Heat/Boil/Stop commands) into `protocol.py`; entities address properties by name
+* share entity setup in `KettleEntity` and describe the buttons the same way as the other platforms
+* remove dead and duplicated constants
+* type the config entry, entities and config flow
+
+### Documentation
+
+* add an English README and move the Russian one to `README.ru.md`
+* correct the entity list, requirements and license in the README
+* name the copyright holder in `LICENSE`
+
+### Tests and CI
+
+* add protocol, config flow, entity and translation tests that run against a fake kettle
+* add a workflow that runs hassfest, HACS validation, ruff and pytest
+* format the code with ruff
+
+### Chores
+
+* complete the manifest (`codeowners`, `documentation`, `issue_tracker`) and declare Home Assistant 2024.11.0 as the minimum version
+
+## 0.2.2 (2026-10-07)
+
+### Features
+
+* add the integration icon ([706b3ed](https://github.com/username-andrey/xiaomi-smart-kettle-ha/commit/706b3edcedab3bc864a05f22a6b45a07d47ac403))
+
+## 0.2.1 (2026-10-07)
+
+### Bug Fixes
+
+* make the Heat and Boil buttons work: send the target temperature, the keep-warm settings, the target mode and the mode settings in one request ([a1a7f88](https://github.com/username-andrey/xiaomi-smart-kettle-ha/commit/a1a7f88b49afd445c0c54e25817cb5e870d8e747))
+
+## 0.2.0 (2026-10-07)
+
+### Features
+
+* add Heat and Boil buttons ([f49802a](https://github.com/username-andrey/xiaomi-smart-kettle-ha/commit/f49802a48c5470df72e3ac8d366fb6361aa175e5))
+* translate entity names into English and Russian ([f49802a](https://github.com/username-andrey/xiaomi-smart-kettle-ha/commit/f49802a48c5470df72e3ac8d366fb6361aa175e5))
+
+## 0.1.0 (2026-10-07)
+
+### Features
+
+* initial release: config flow with IP address and token, sensors, binary sensor, switches, numbers and a Stop button for the Xiaomi Smart Kettle 2 Pro (`xiaomi.kettle.v20`) ([8b5e631](https://github.com/username-andrey/xiaomi-smart-kettle-ha/commit/8b5e631c4d8aa89acf8fede85d0c24f534f781b0))
