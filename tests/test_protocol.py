@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
+import threading
+import time
+
 import pytest
 
 from custom_components.xiaomi_smart_kettle.protocol import (
@@ -84,6 +88,28 @@ def test_stop_raises_on_unexpected_result(result: object) -> None:
 
     with pytest.raises(KettleError):
         kettle.stop()
+
+
+def test_requests_never_overlap(device: FakeKettle) -> None:
+    in_flight = 0
+    overlapped = threading.Event()
+
+    def slow_send(method: str, params: object) -> object:
+        nonlocal in_flight
+        in_flight += 1
+        if in_flight > 1:
+            overlapped.set()
+        time.sleep(0.01)
+        in_flight -= 1
+        return device.send(method, params)
+
+    kettle = Kettle(slow_send)
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        for _ in range(4):
+            pool.submit(kettle.read)
+        pool.submit(kettle.stop)
+
+    assert not overlapped.is_set()
 
 
 def test_start_heat_payload(device: FakeKettle, kettle: Kettle) -> None:

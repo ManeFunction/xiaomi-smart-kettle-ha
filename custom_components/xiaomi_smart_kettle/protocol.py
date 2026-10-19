@@ -11,6 +11,7 @@ needs neither Home Assistant nor a real device to be tested.
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
+from threading import Lock
 from typing import Any
 
 type Send = Callable[[str, Any], Any]
@@ -80,6 +81,9 @@ class Kettle:
 
     def __init__(self, send: Send) -> None:
         self._send = send
+        # python-miio tracks message IDs per device without locking, so two
+        # requests in flight at once can reuse an ID and time out.
+        self._lock = Lock()
 
     def read(self, names: Iterable[str] = POLLED) -> dict[str, Any]:
         """Read properties by name, leaving out those the kettle fails to report."""
@@ -88,7 +92,7 @@ class Kettle:
         for start in range(0, len(names), READ_BATCH_SIZE):
             batch = names[start : start + READ_BATCH_SIZE]
             request = [{"did": name, **_address(name)} for name in batch]
-            for item in self._send("get_properties", request):
+            for item in self._request("get_properties", request):
                 if item.get("code") == 0:
                     values[item["did"]] = item.get("value")
         return values
@@ -100,13 +104,17 @@ class Kettle:
             address = _address(name)
             did = f"{address['siid']}-{address['piid']}"
             payload.append({"did": did, **address, "value": value})
-        _check(self._send("set_properties", payload), "properties")
+        _check(self._request("set_properties", payload), "properties")
 
     def stop(self) -> None:
         """Stop heating or boiling."""
         siid, aiid = STOP_WORK
         params = {"did": f"action-{siid}-{aiid}", "siid": siid, "aiid": aiid, "in": []}
-        _check(self._send("action", params), f"action {siid}.{aiid}")
+        _check(self._request("action", params), f"action {siid}.{aiid}")
+
+    def _request(self, method: str, params: Any) -> Any:
+        with self._lock:
+            return self._send(method, params)
 
     def start_heat(self, state: Mapping[str, Any]) -> None:
         """Heat to the target temperature with the current keep-warm settings."""
