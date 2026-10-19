@@ -1,6 +1,7 @@
 from typing import Any
 
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -9,14 +10,18 @@ from .entity import KettleEntity
 
 DESCRIPTIONS = [
     SwitchEntityDescription(key="auto_keep_warm", translation_key="auto_keep_warm"),
-    SwitchEntityDescription(
-        key="lift_remember_temp", translation_key="lift_remember_temp"
+    # Settings rather than everyday controls: shown under Configuration
+    *(
+        SwitchEntityDescription(
+            key=key, translation_key=key, entity_category=EntityCategory.CONFIG
+        )
+        for key in (
+            "lift_remember_temp",
+            "boiling_reminder",
+            "keep_warm_reminder",
+            "no_disturb",
+        )
     ),
-    SwitchEntityDescription(key="boiling_reminder", translation_key="boiling_reminder"),
-    SwitchEntityDescription(
-        key="keep_warm_reminder", translation_key="keep_warm_reminder"
-    ),
-    SwitchEntityDescription(key="no_disturb", translation_key="no_disturb"),
 ]
 
 

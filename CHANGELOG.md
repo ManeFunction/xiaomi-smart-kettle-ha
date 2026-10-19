@@ -7,9 +7,11 @@ All notable changes to this project are documented in this file. Commits follow 
 ### Features
 
 * **sensor:** expose the kettle status as an enum sensor with translated states (standby, heating, boiling, cooling down, keeping warm)
+* **switch:** move the remember-temperature, boiling notification, keep-warm notification and do-not-disturb switches to the device's Configuration section, which also keeps them off auto-generated dashboards and out of the HomeKit bridge by default
 
 ### Bug Fixes
 
+* **switch:** rename "Boiling reminder" and "Keep-warm reminder" to "Boiling notification" and "Keep-warm notification", which is what they control (entity IDs of existing installs are unchanged)
 * keep the heat target when Boil runs, so the next Heat heats to the target temperature instead of 99 °C and the "Target temperature" entity no longer jumps to 99
 * re-read the keep-warm settings from the kettle right before Heat and Boil, and refuse to start instead of sending invented defaults when a setting is unknown
 * raise readable, translated errors when a command fails because the kettle is unreachable or rejects it

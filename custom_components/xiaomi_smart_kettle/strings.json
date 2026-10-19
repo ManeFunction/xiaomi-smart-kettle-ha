@@ -53,10 +53,10 @@
         "name": "Remember temperature after lifting"
       },
       "boiling_reminder": {
-        "name": "Boiling reminder"
+        "name": "Boiling notification"
       },
       "keep_warm_reminder": {
-        "name": "Keep-warm reminder"
+        "name": "Keep-warm notification"
       },
       "no_disturb": {
         "name": "Do not disturb"

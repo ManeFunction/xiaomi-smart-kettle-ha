@@ -15,6 +15,7 @@ from homeassistant.const import (
     STATE_OFF,
     STATE_ON,
     STATE_UNKNOWN,
+    EntityCategory,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
@@ -87,6 +88,22 @@ async def test_status_is_an_enum(
         "cooling",
         "keep_warm",
     ]
+
+
+async def test_settings_are_configuration_entities(
+    hass: HomeAssistant, entity_registry: er.EntityRegistry
+) -> None:
+    def category(entity_id: str) -> EntityCategory | None:
+        return entity_registry.async_get(entity_id).entity_category
+
+    assert category(f"switch.{PREFIX}_keep_warm") is None
+    for name in (
+        "remember_temperature_after_lifting",
+        "boiling_notification",
+        "keep_warm_notification",
+        "do_not_disturb",
+    ):
+        assert category(f"switch.{PREFIX}_{name}") is EntityCategory.CONFIG
 
 
 async def test_unique_ids(
