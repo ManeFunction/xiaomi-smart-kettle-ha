@@ -14,6 +14,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 import pytest
 
+from custom_components.xiaomi_smart_kettle.protocol import POLLED
+
 from .conftest import UNIQUE_ID
 from .fake_kettle import FakeKettle
 
@@ -29,6 +31,20 @@ async def test_states(hass: HomeAssistant) -> None:
     assert hass.states.get(f"switch.{PREFIX}_keep_warm").state == STATE_ON
     assert hass.states.get(f"number.{PREFIX}_target_temperature").state == "80"
     assert hass.states.get(f"number.{PREFIX}_keep_warm_time").state == "720"
+
+
+async def test_every_entity_value_is_polled(
+    hass: HomeAssistant, entity_registry: er.EntityRegistry, setup_integration
+) -> None:
+    entries = er.async_entries_for_config_entry(
+        entity_registry, setup_integration.entry_id
+    )
+    keys = {
+        entry.unique_id.removeprefix(f"{UNIQUE_ID}_")
+        for entry in entries
+        if entry.domain != "button"
+    }
+    assert keys <= set(POLLED)
 
 
 async def test_unique_ids(

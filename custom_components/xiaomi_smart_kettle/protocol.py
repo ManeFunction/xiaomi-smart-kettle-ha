@@ -17,7 +17,7 @@ type Send = Callable[[str, Any], Any]
 
 MODEL = "xiaomi.kettle.v20"
 
-# name -> (siid, piid)
+# name -> (siid, piid), for the properties this integration reads or writes
 PROPERTIES: dict[str, tuple[int, int]] = {
     "status": (2, 1),
     "fault": (2, 2),
@@ -25,34 +25,33 @@ PROPERTIES: dict[str, tuple[int, int]] = {
     "target_temperature": (2, 4),
     "auto_keep_warm": (2, 5),
     "keep_warm_temperature": (2, 6),
-    "on": (2, 7),
     "keep_warm_time": (3, 1),
-    "custom_knob_temp": (3, 2),
     "lift_remember_temp": (3, 4),
     "boiling_reminder": (3, 5),
     "keep_warm_reminder": (3, 6),
     "kettle_lifting": (3, 7),
-    "extended_mode": (3, 8),
     "warming_time": (3, 10),
     "target_mode": (3, 11),
     "heat_mode": (3, 12),
     "boil_mode": (3, 13),
-    "knob_sequence": (4, 1),
-    "knob_one": (4, 2),
-    "knob_two": (4, 3),
-    "knob_three": (4, 4),
-    "knob_four": (4, 5),
-    "knob_five": (4, 6),
-    "knob_six": (4, 7),
-    "scene_sequence": (5, 1),
-    "scene_one": (5, 2),
-    "scene_two": (5, 3),
-    "scene_three": (5, 4),
-    "scene_four": (5, 5),
-    "scene_five": (5, 6),
     "no_disturb": (6, 1),
 }
-POLLED = tuple(PROPERTIES)
+# Properties the entities show; the mode properties are only written.
+POLLED = (
+    "status",
+    "fault",
+    "temperature",
+    "target_temperature",
+    "auto_keep_warm",
+    "keep_warm_temperature",
+    "keep_warm_time",
+    "lift_remember_temp",
+    "boiling_reminder",
+    "keep_warm_reminder",
+    "kettle_lifting",
+    "warming_time",
+    "no_disturb",
+)
 READ_BATCH_SIZE = 5
 
 STOP_WORK = (3, 1)  # (siid, aiid)
