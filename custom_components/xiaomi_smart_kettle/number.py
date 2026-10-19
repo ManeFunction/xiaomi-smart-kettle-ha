@@ -6,15 +6,16 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .coordinator import KettleConfigEntry
 from .entity import KettleEntity
 
+HEAT_TARGET = NumberEntityDescription(
+    key="target_temperature",
+    translation_key="target_temperature",
+    native_min_value=40,
+    native_max_value=99,
+    native_step=1,
+    native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+)
+
 DESCRIPTIONS = [
-    NumberEntityDescription(
-        key="target_temperature",
-        translation_key="target_temperature",
-        native_min_value=40,
-        native_max_value=99,
-        native_step=1,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-    ),
     NumberEntityDescription(
         key="keep_warm_temperature",
         translation_key="keep_warm_temperature",
@@ -39,7 +40,13 @@ async def async_setup_entry(
     entry: KettleConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    async_add_entities(KettleNumber(entry.runtime_data, d) for d in DESCRIPTIONS)
+    coordinator = entry.runtime_data
+    async_add_entities(
+        [
+            KettleHeatTargetNumber(coordinator, HEAT_TARGET),
+            *(KettleNumber(coordinator, d) for d in DESCRIPTIONS),
+        ]
+    )
 
 
 class KettleNumber(KettleEntity, NumberEntity):
@@ -53,3 +60,14 @@ class KettleNumber(KettleEntity, NumberEntity):
         await self.coordinator.async_set_properties(
             {self.entity_description.key: int(value)}
         )
+
+
+class KettleHeatTargetNumber(KettleNumber):
+    """The target temperature, which keeps the heat target while the kettle boils."""
+
+    @property
+    def native_value(self) -> float | None:
+        return self.coordinator.heat_target
+
+    async def async_set_native_value(self, value: float) -> None:
+        await self.coordinator.async_set_heat_target(int(value))

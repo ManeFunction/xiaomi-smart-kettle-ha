@@ -37,7 +37,8 @@ PROPERTIES: dict[str, tuple[int, int]] = {
     "boil_mode": (3, 13),
     "no_disturb": (6, 1),
 }
-# Properties the entities show; the mode properties are only written.
+# Properties the entities show, plus target_mode and heat_mode, which tell the
+# heat target apart from Boil's 99 °C. boil_mode is only written.
 POLLED = (
     "status",
     "fault",
@@ -51,16 +52,13 @@ POLLED = (
     "keep_warm_reminder",
     "kettle_lifting",
     "warming_time",
+    "target_mode",
+    "heat_mode",
     "no_disturb",
 )
 READ_BATCH_SIZE = 5
 # Properties Heat and Boil send back to the kettle unchanged
-START_INPUTS = (
-    "target_temperature",
-    "auto_keep_warm",
-    "keep_warm_temperature",
-    "keep_warm_time",
-)
+KEEP_WARM_SETTINGS = ("auto_keep_warm", "keep_warm_temperature", "keep_warm_time")
 
 STOP_WORK = (3, 1)  # (siid, aiid)
 
@@ -99,6 +97,7 @@ class Kettle:
         # python-miio tracks message IDs per device without locking, so two
         # requests in flight at once can reuse an ID and time out.
         self._lock = Lock()
+        self.heat_target: int | None = None
 
     def read(self, names: Iterable[str] = POLLED) -> dict[str, Any]:
         """Read properties by name, leaving out those the kettle fails to report."""
@@ -110,6 +109,7 @@ class Kettle:
             for item in self._request("get_properties", request):
                 if item.get("code") == 0:
                     values[item["did"]] = item.get("value")
+        self._track_heat_target(values)
         return values
 
     def write(self, values: Mapping[str, Any]) -> None:
@@ -131,28 +131,50 @@ class Kettle:
         with self._lock:
             return self._send(method, params)
 
+    def set_heat_target(self, value: int) -> None:
+        """Set the temperature Heat heats to."""
+        self.write({"target_temperature": value})
+        self.heat_target = value
+
     def start_heat(self) -> None:
-        """Heat to the target temperature with the current keep-warm settings."""
-        state = self._read_start_inputs()
-        target = int(state["target_temperature"])
-        self._start(state, target, HEAT_TARGET_MODE, "heat_mode")
+        """Heat to the heat target with the current keep-warm settings."""
+        state = self._read_keep_warm_settings(
+            "target_temperature", "target_mode", "heat_mode"
+        )
+        if self.heat_target is None:
+            raise KettleStateError(["target_temperature"])
+        self._start(state, self.heat_target, HEAT_TARGET_MODE, "heat_mode")
 
     def start_boil(self) -> None:
         """Boil with the current keep-warm settings."""
-        state = self._read_start_inputs()
+        state = self._read_keep_warm_settings()
         self._start(state, BOIL_TEMPERATURE, BOIL_TARGET_MODE, "boil_mode")
 
-    def _read_start_inputs(self) -> dict[str, Any]:
-        """Read the settings Heat and Boil resend, fresh from the kettle.
+    def _read_keep_warm_settings(self, *extra: str) -> dict[str, Any]:
+        """Read the keep-warm settings Heat and Boil resend, fresh from the kettle.
 
         A cached poll can be seconds old and would undo a change made in the
         Mi Home app or on the kettle in the meantime.
         """
-        state = self.read(START_INPUTS)
-        missing = [name for name in START_INPUTS if state.get(name) is None]
+        state = self.read((*extra, *KEEP_WARM_SETTINGS))
+        missing = [name for name in KEEP_WARM_SETTINGS if state.get(name) is None]
         if missing:
             raise KettleStateError(missing)
         return state
+
+    def _track_heat_target(self, values: Mapping[str, Any]) -> None:
+        """Remember the temperature Heat heats to.
+
+        Boil sets the target temperature to 99 °C, so while the kettle is in boil
+        mode the target temperature is not the heat target. Keep the last one
+        seen in heat mode, or after a restart take the one in the heat mode
+        settings.
+        """
+        target = values.get("target_temperature")
+        if target is not None and values.get("target_mode") != BOIL_TARGET_MODE:
+            self.heat_target = int(target)
+        elif self.heat_target is None:
+            self.heat_target = _mode_target(values.get("heat_mode"))
 
     def _start(
         self, state: Mapping[str, Any], target: int, target_mode: int, mode: str
@@ -175,6 +197,12 @@ class Kettle:
 def _address(name: str) -> dict[str, int]:
     siid, piid = PROPERTIES[name]
     return {"siid": siid, "piid": piid}
+
+
+def _mode_target(mode: Any) -> int | None:
+    """Return the target of a "target,keep_warm,keep_warm_temp,keep_warm_time" mode."""
+    target = mode.split(",")[0] if isinstance(mode, str) else ""
+    return int(target) if target.isdigit() else None
 
 
 def _check(result: Any, what: str) -> None:

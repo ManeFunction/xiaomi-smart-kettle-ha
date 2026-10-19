@@ -46,6 +46,13 @@ class KettleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def async_set_properties(self, values: Mapping[str, Any]) -> None:
         await self._async_run(self.kettle.write, values)
 
+    @property
+    def heat_target(self) -> int | None:
+        return self.kettle.heat_target
+
+    async def async_set_heat_target(self, value: int) -> None:
+        await self._async_run(self.kettle.set_heat_target, value)
+
     async def async_start_heat(self) -> None:
         await self._async_run(self.kettle.start_heat)
 

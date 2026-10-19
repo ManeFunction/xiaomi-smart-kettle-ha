@@ -138,6 +138,30 @@ async def test_boil_button(hass: HomeAssistant, device: FakeKettle) -> None:
     assert payload[-1] == {"did": "3-13", "siid": 3, "piid": 13, "value": "99,1,50,720"}
 
 
+async def test_target_temperature_survives_boil(
+    hass: HomeAssistant, device: FakeKettle
+) -> None:
+    await _press(hass, "boil")
+
+    assert device.state[(2, 4)] == 99
+    assert hass.states.get(f"number.{PREFIX}_target_temperature").state == "80"
+
+
+async def test_target_temperature_sets_heat_target(
+    hass: HomeAssistant, device: FakeKettle
+) -> None:
+    await _press(hass, "boil")
+    await hass.services.async_call(
+        NUMBER_DOMAIN,
+        SERVICE_SET_VALUE,
+        {ATTR_ENTITY_ID: f"number.{PREFIX}_target_temperature", ATTR_VALUE: 70},
+        blocking=True,
+    )
+    await _press(hass, "heat")
+
+    assert device.state[(3, 12)] == "70,1,50,720"
+
+
 async def test_stop_button(hass: HomeAssistant, device: FakeKettle) -> None:
     await _press(hass, "stop")
 

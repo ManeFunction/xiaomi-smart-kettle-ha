@@ -165,3 +165,65 @@ def test_start_refuses_without_settings(
 
     assert err.value.missing == ["keep_warm_time"]
     assert device.sent("set_properties") == []
+
+
+def _heat_payload_target(device: FakeKettle) -> object:
+    return device.sent("set_properties")[-1][0]["value"]
+
+
+def test_heat_after_boil_keeps_the_heat_target(
+    device: FakeKettle, kettle: Kettle
+) -> None:
+    kettle.read()
+    kettle.start_boil()
+    kettle.read()
+    assert device.state[(2, 4)] == 99
+
+    kettle.start_heat()
+
+    assert _heat_payload_target(device) == 80
+    assert device.state[(3, 12)] == "80,1,50,720"
+
+
+def test_heat_target_follows_changes_in_heat_mode(
+    device: FakeKettle, kettle: Kettle
+) -> None:
+    kettle.read()
+    device.state[(2, 4)] = 85  # changed on the kettle
+
+    kettle.start_heat()
+
+    assert _heat_payload_target(device) == 85
+
+
+def test_heat_target_after_restart_in_boil_mode(device: FakeKettle) -> None:
+    device.state.update({(2, 4): 99, (3, 11): 1, (3, 12): "75,1,50,720"})
+    kettle = Kettle(device.send)
+
+    kettle.start_heat()
+
+    assert _heat_payload_target(device) == 75
+
+
+def test_set_heat_target_while_in_boil_mode(device: FakeKettle) -> None:
+    device.state.update({(2, 4): 99, (3, 11): 1})
+    kettle = Kettle(device.send)
+    kettle.read()
+
+    kettle.set_heat_target(70)
+    kettle.read()
+
+    assert kettle.heat_target == 70
+    kettle.start_heat()
+    assert _heat_payload_target(device) == 70
+
+
+def test_heat_refuses_when_heat_target_is_unknown(device: FakeKettle) -> None:
+    device.state.update({(2, 4): 99, (3, 11): 1, (3, 12): ""})
+    kettle = Kettle(device.send)
+
+    with pytest.raises(KettleStateError) as err:
+        kettle.start_heat()
+
+    assert err.value.missing == ["target_temperature"]
+    assert device.sent("set_properties") == []
