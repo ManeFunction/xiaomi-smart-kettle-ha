@@ -13,6 +13,9 @@
     "error": {
       "cannot_connect": "Cannot connect to the kettle. Check IP address and token.",
       "unsupported_model": "The device responded, but it is not xiaomi.kettle.v20."
+    },
+    "abort": {
+      "already_configured": "This kettle is already configured. Its IP address and token have been updated."
     }
   },
   "entity": {

@@ -13,6 +13,9 @@
     "error": {
       "cannot_connect": "Не удалось подключиться к чайнику. Проверьте IP-адрес и token.",
       "unsupported_model": "Устройство отвечает, но его модель отличается от xiaomi.kettle.v20."
+    },
+    "abort": {
+      "already_configured": "Этот чайник уже настроен. Его IP-адрес и token обновлены."
     }
   },
   "entity": {
