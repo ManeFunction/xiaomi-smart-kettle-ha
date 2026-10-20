@@ -95,10 +95,62 @@ async def test_target_survives_boil(hass: HomeAssistant, device: FakeKettle) -> 
     assert hass.states.get(ENTITY_ID).attributes["temperature"] == 80
 
 
-async def _call(hass: HomeAssistant, service: str, data: dict | None = None) -> None:
+async def _call(
+    hass: HomeAssistant,
+    service: str,
+    data: dict | None = None,
+    entity_id: str = ENTITY_ID,
+) -> None:
     await hass.services.async_call(
         WATER_HEATER_DOMAIN,
         service,
-        {ATTR_ENTITY_ID: ENTITY_ID, **(data or {})},
+        {ATTR_ENTITY_ID: entity_id, **(data or {})},
         blocking=True,
     )
+
+
+KEEP_WARM_ID = "water_heater.xiaomi_smart_kettle_2_pro_keep_kettle_warm"
+
+
+async def test_keep_warm_state(hass: HomeAssistant, device: FakeKettle) -> None:
+    state = hass.states.get(KEEP_WARM_ID)
+
+    assert state.state == "on"
+    assert state.attributes["temperature"] == 50
+    assert state.attributes["current_temperature"] == 50  # not the water's 23
+    assert state.attributes["min_temp"] == 40
+    assert state.attributes["max_temp"] == 90
+
+
+async def test_keep_warm_follows_the_switch(
+    hass: HomeAssistant, device: FakeKettle, setup_integration
+) -> None:
+    device.state[(2, 5)] = False
+
+    await setup_integration.runtime_data.async_refresh()
+
+    assert hass.states.get(KEEP_WARM_ID).state == STATE_OFF
+
+
+async def test_keep_warm_turn_off_writes_switch(
+    hass: HomeAssistant, device: FakeKettle
+) -> None:
+    await _call(hass, SERVICE_TURN_OFF, entity_id=KEEP_WARM_ID)
+
+    assert device.sent("set_properties") == [
+        [{"did": "2-5", "siid": 2, "piid": 5, "value": False}]
+    ]
+    assert hass.states.get("switch.xiaomi_smart_kettle_2_pro_keep_warm").state == "off"
+
+
+async def test_keep_warm_set_temperature(
+    hass: HomeAssistant, device: FakeKettle
+) -> None:
+    await _call(
+        hass, SERVICE_SET_TEMPERATURE, {ATTR_TEMPERATURE: 65.4}, entity_id=KEEP_WARM_ID
+    )
+
+    assert device.sent("set_properties") == [
+        [{"did": "2-6", "siid": 2, "piid": 6, "value": 65}]
+    ]
+    assert hass.states.get(KEEP_WARM_ID).attributes["current_temperature"] == 65

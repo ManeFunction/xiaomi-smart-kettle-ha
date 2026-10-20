@@ -97,6 +97,13 @@
           "cooling": "Cooling down",
           "keep_warm": "Keeping warm"
         }
+      },
+      "keep_warm": {
+        "name": "Keep kettle warm",
+        "state": {
+          "off": "Off",
+          "on": "On"
+        }
       }
     }
   },

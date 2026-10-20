@@ -5,7 +5,12 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .coordinator import KettleConfigEntry
 from .entity import KettleEntity
-from .protocol import HEAT_TEMPERATURE_MAX, HEAT_TEMPERATURE_MIN
+from .protocol import (
+    HEAT_TEMPERATURE_MAX,
+    HEAT_TEMPERATURE_MIN,
+    KEEP_WARM_TEMPERATURE_MAX,
+    KEEP_WARM_TEMPERATURE_MIN,
+)
 
 HEAT_TARGET = NumberEntityDescription(
     key="target_temperature",
@@ -20,8 +25,8 @@ DESCRIPTIONS = [
     NumberEntityDescription(
         key="keep_warm_temperature",
         translation_key="keep_warm_temperature",
-        native_min_value=40,
-        native_max_value=90,
+        native_min_value=KEEP_WARM_TEMPERATURE_MIN,
+        native_max_value=KEEP_WARM_TEMPERATURE_MAX,
         native_step=1,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
     ),

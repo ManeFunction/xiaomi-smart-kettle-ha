@@ -67,6 +67,9 @@ STATUSES = {0: "standby", 1: "heating", 2: "boiling", 3: "cooling", 4: "keep_war
 # Range of target-temperature (2.4), which is the heat target outside boil mode
 HEAT_TEMPERATURE_MIN = 40
 HEAT_TEMPERATURE_MAX = 99
+# Keep-warm temperature (2.6) range the Mi Home app allows; the spec allows 0-100
+KEEP_WARM_TEMPERATURE_MIN = 40
+KEEP_WARM_TEMPERATURE_MAX = 90
 
 HEAT_TARGET_MODE = 0
 BOIL_TARGET_MODE = 1
