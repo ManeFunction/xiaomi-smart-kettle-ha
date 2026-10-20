@@ -70,9 +70,6 @@
       "target_temperature": {
         "name": "Температура нагрева"
       },
-      "keep_warm_temperature": {
-        "name": "Температура поддержания"
-      },
       "keep_warm_time": {
         "name": "Время поддержания"
       }

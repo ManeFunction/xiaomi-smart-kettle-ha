@@ -1,16 +1,17 @@
-from homeassistant.components.number import NumberEntity, NumberEntityDescription
+from homeassistant.components.number import (
+    DOMAIN as NUMBER_DOMAIN,
+    NumberEntity,
+    NumberEntityDescription,
+)
 from homeassistant.const import UnitOfTemperature, UnitOfTime
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from .const import DOMAIN
 from .coordinator import KettleConfigEntry
 from .entity import KettleEntity
-from .protocol import (
-    HEAT_TEMPERATURE_MAX,
-    HEAT_TEMPERATURE_MIN,
-    KEEP_WARM_TEMPERATURE_MAX,
-    KEEP_WARM_TEMPERATURE_MIN,
-)
+from .protocol import HEAT_TEMPERATURE_MAX, HEAT_TEMPERATURE_MIN
 
 HEAT_TARGET = NumberEntityDescription(
     key="target_temperature",
@@ -22,14 +23,6 @@ HEAT_TARGET = NumberEntityDescription(
 )
 
 DESCRIPTIONS = [
-    NumberEntityDescription(
-        key="keep_warm_temperature",
-        translation_key="keep_warm_temperature",
-        native_min_value=KEEP_WARM_TEMPERATURE_MIN,
-        native_max_value=KEEP_WARM_TEMPERATURE_MAX,
-        native_step=1,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-    ),
     NumberEntityDescription(
         key="keep_warm_time",
         translation_key="keep_warm_time",
@@ -46,6 +39,14 @@ async def async_setup_entry(
     entry: KettleConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
+    # The keep-warm temperature number was replaced by the keep-warm thermostat.
+    # Remove it from the registry so it doesn't linger as unavailable.
+    registry = er.async_get(hass)
+    if entity_id := registry.async_get_entity_id(
+        NUMBER_DOMAIN, DOMAIN, f"{entry.unique_id}_keep_warm_temperature"
+    ):
+        registry.async_remove(entity_id)
+
     coordinator = entry.runtime_data
     async_add_entities(
         [

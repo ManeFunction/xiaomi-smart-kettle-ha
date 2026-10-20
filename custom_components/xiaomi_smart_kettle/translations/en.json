@@ -70,9 +70,6 @@
       "target_temperature": {
         "name": "Heat temperature"
       },
-      "keep_warm_temperature": {
-        "name": "Keep-warm temperature"
-      },
       "keep_warm_time": {
         "name": "Keep-warm time"
       }

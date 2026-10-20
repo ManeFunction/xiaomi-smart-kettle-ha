@@ -24,7 +24,6 @@ The integration reads the kettle's Xiaomi miIO properties and creates these enti
 | Status | Standby, heating, boiling, cooling down or keeping warm |
 | Fault | Diagnostic code reported by the kettle |
 | Keep warm | Whether the kettle keeps the water warm afterwards |
-| Keep-warm temperature | Temperature to keep the water at (40–90 °C) |
 | Keep-warm time | How long to keep the water warm (60–1440 min) |
 | Warming time | Warming time reported by the kettle |
 | Kettle lifted | Whether the kettle is off its base |
