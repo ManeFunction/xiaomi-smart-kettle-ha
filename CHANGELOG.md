@@ -8,7 +8,7 @@ All notable changes to this project are documented in this file. Commits follow 
 
 * **number:** remove the Keep-warm temperature number, which the keep-warm thermostat replaces; its entity is removed from the registry on existing installs
 * **binary_sensor:** give "Kettle lifted" the opening device class with "Lifted" and "On base" states, so the HomeKit bridge exposes it as a contact sensor (open while lifted) instead of an occupancy sensor
-* **water_heater:** add an Auto keep warm water heater for the keep-warm settings: turning it on and off sets the Keep warm switch, its target is the keep-warm temperature (40–90 °C), and it shows that temperature instead of the water temperature, so its Apple Home tile differs from the kettle's
+* **water_heater:** add a Keep warm temperature water heater for the keep-warm settings: turning it on and off sets the Keep warm switch, its target is the keep-warm temperature (40–90 °C), and it shows that temperature instead of the water temperature, so its Apple Home tile differs from the kettle's
 * **water_heater:** add a Kettle water heater entity for Home Assistant's water heater card and the HomeKit bridge: it shows the water temperature and status, its target is the heat temperature (40–99 °C), turning it on starts Heat and turning it off stops the kettle
 * **sensor:** expose the kettle status as an enum sensor with translated states (standby, heating, boiling, cooling down, keeping warm)
 * **switch:** move the remember-temperature, boiling notification, keep-warm notification and do-not-disturb switches to the device's Configuration section, which also keeps them off auto-generated dashboards and out of the HomeKit bridge by default

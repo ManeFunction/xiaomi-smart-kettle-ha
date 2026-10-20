@@ -96,7 +96,7 @@
         }
       },
       "keep_warm": {
-        "name": "Auto keep warm",
+        "name": "Keep warm temperature",
         "state": {
           "off": "Off",
           "on": "On"

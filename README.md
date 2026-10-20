@@ -18,7 +18,7 @@ The integration reads the kettle's Xiaomi miIO properties and creates these enti
 | Entity | Description |
 | --- | --- |
 | Kettle | Water heater: current water temperature, heat temperature, on starts **Heat**, off presses **Stop**; the state shows heating, boiling, cooling down or keeping warm |
-| Auto keep warm | Water heater for the keep-warm settings: on/off is the **Keep warm** switch, the target is the keep-warm temperature (40–90 °C); it shows that temperature instead of the water temperature |
+| Keep warm temperature | Water heater for the keep-warm settings: on/off is the **Keep warm** switch, the target is the keep-warm temperature (40–90 °C); it shows that temperature instead of the water temperature |
 | Water temperature | Current temperature of the water |
 | Heat temperature | Temperature that **Heat** heats to (40–99 °C) |
 | Status | Standby, heating, boiling, cooling down or keeping warm |
@@ -95,7 +95,7 @@ Expose the kettle to Apple Home with Home Assistant's [HomeKit Bridge](https://w
 
 - **Kettle** (`water_heater.…`) appears as a thermostat. The tile shows the water temperature, the dial sets the heat temperature (40–99 °C), **Heat** starts heating and **Off** stops the kettle.
 - **Boil** (`button.…_boil`) appears as a switch that turns itself off after it runs.
-- **Auto keep warm** (`water_heater.…_auto_keep_warm`) appears as a second thermostat. **Heat** and **Off** turn keep-warm on and off, and the dial sets the keep-warm temperature (40–90 °C). Its tile shows the keep-warm temperature rather than the water temperature, so it's easy to tell apart from the kettle. With it, you don't need to bridge the **Keep warm** switch.
+- **Keep warm temperature** (`water_heater.…_keep_warm_temperature`) appears as a second thermostat. **Heat** and **Off** turn keep-warm on and off, and the dial sets the keep-warm temperature (40–90 °C). Its tile shows the keep-warm temperature rather than the water temperature, so it's easy to tell apart from the kettle. With it, you don't need to bridge the **Keep warm** switch.
 - **Kettle lifted** (`binary_sensor.…_kettle_lifted`) appears as a contact sensor that is open while the kettle is off its base.
 
 The settings under *Configuration* (notifications, do not disturb, remember temperature after lifting) are left out of the bridge unless you include them explicitly.
