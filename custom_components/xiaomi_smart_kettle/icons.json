@@ -1,0 +1,12 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "kettle_lifting": {
+        "default": "mdi:kettle-outline",
+        "state": {
+          "on": "mdi:kettle-off-outline"
+        }
+      }
+    }
+  }
+}

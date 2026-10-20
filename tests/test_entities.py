@@ -20,9 +20,11 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.icon import async_get_icons
 from miio.exceptions import DeviceException
 import pytest
 
+from custom_components.xiaomi_smart_kettle.const import DOMAIN
 from custom_components.xiaomi_smart_kettle.protocol import POLLED
 
 from .conftest import UNIQUE_ID
@@ -110,6 +112,15 @@ async def test_kettle_lifted_is_an_opening(hass: HomeAssistant) -> None:
     state = hass.states.get(f"binary_sensor.{PREFIX}_kettle_lifted")
 
     assert state.attributes["device_class"] == "opening"
+
+
+async def test_kettle_lifted_icons(hass: HomeAssistant) -> None:
+    icons = await async_get_icons(hass, "entity", integrations=[DOMAIN])
+
+    assert icons[DOMAIN]["binary_sensor"]["kettle_lifting"] == {
+        "default": "mdi:kettle-outline",  # on base
+        "state": {"on": "mdi:kettle-off-outline"},  # lifted
+    }
 
 
 async def test_unique_ids(
