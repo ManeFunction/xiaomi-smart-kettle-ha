@@ -15,6 +15,7 @@ All notable changes to this project are documented in this file. Commits follow 
 
 ### Bug Fixes
 
+* **number:** changing the heat temperature no longer starts heating: writing the kettle's target temperature made it heat, so the value is now kept in Home Assistant and sent with the next Heat, while a new target the kettle reports in heat mode (e.g. from Mi Home) is still picked up
 * show the result of a change right away instead of after the next poll: a second change within 10 s used to wait for the debounced refresh, and the Home app's half-degree dial values now snap to the whole degree the kettle got (halves round up)
 * **number:** rename "Target temperature" to "Heat temperature", since it is the temperature the Heat button heats to (entity IDs of existing installs are unchanged)
 * **switch:** rename "Boiling reminder" and "Keep-warm reminder" to "Boiling notification" and "Keep-warm notification", which is what they control (entity IDs of existing installs are unchanged)

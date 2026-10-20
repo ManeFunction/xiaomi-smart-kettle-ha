@@ -73,9 +73,7 @@ async def test_set_temperature_sets_heat_target(
 ) -> None:
     await _call(hass, SERVICE_SET_TEMPERATURE, {ATTR_TEMPERATURE: 70})
 
-    assert device.sent("set_properties") == [
-        [{"did": "2-4", "siid": 2, "piid": 4, "value": 70}]
-    ]
+    assert device.sent("set_properties") == []  # writing 2.4 would start heating
     assert hass.states.get(ENTITY_ID).attributes["temperature"] == 70
     assert (
         hass.states.get("number.xiaomi_smart_kettle_2_pro_heat_temperature").state

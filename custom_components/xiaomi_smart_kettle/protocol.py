@@ -105,6 +105,9 @@ class Kettle:
         # requests in flight at once can reuse an ID and time out.
         self._lock = Lock()
         self.heat_target: int | None = None
+        # Last target temperature the kettle reported, to notice changes made
+        # outside Home Assistant
+        self._reported_target: Any = None
 
     def read(self, names: Iterable[str] = POLLED) -> dict[str, Any]:
         """Read properties by name, leaving out those the kettle fails to report."""
@@ -139,8 +142,11 @@ class Kettle:
             return self._send(method, params)
 
     def set_heat_target(self, value: int) -> None:
-        """Set the temperature Heat heats to."""
-        self.write({"target_temperature": value})
+        """Set the temperature Heat heats to.
+
+        Writing the target temperature makes the kettle start heating, so the
+        value is only remembered here and sent with the next Heat.
+        """
         self.heat_target = value
 
     def start_heat(self) -> None:
@@ -172,15 +178,18 @@ class Kettle:
     def _track_heat_target(self, values: Mapping[str, Any]) -> None:
         """Remember the temperature Heat heats to.
 
-        Boil sets the target temperature to 99 °C, so while the kettle is in boil
-        mode the target temperature is not the heat target. Keep the last one
-        seen in heat mode, or after a restart take the one in the heat mode
-        settings.
+        The heat target changes when it is set here, or when the kettle reports
+        a new target temperature in heat mode, e.g. after heating from the Mi
+        Home app. Boil sets the target temperature to 99 °C, which is not a heat
+        target, so changes in boil mode are ignored. After a restart in boil
+        mode, take the target in the heat mode settings.
         """
         target = values.get("target_temperature")
-        if target is not None and values.get("target_mode") != BOIL_TARGET_MODE:
-            self.heat_target = int(target)
-        elif self.heat_target is None:
+        if target is not None and target != self._reported_target:
+            self._reported_target = target
+            if values.get("target_mode") != BOIL_TARGET_MODE:
+                self.heat_target = int(target)
+        if self.heat_target is None:
             self.heat_target = _mode_target(values.get("heat_mode"))
 
     def _start(

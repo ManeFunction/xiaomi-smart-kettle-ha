@@ -180,9 +180,28 @@ async def test_heat_temperature_sets_heat_target(
         {ATTR_ENTITY_ID: f"number.{PREFIX}_heat_temperature", ATTR_VALUE: 70},
         blocking=True,
     )
+    assert device.sent("set_properties")[1:] == []  # only Boil was sent
     await _press(hass, "heat")
 
     assert device.state[(3, 12)] == "70,1,50,720"
+
+
+async def test_poll_keeps_the_heat_temperature(
+    hass: HomeAssistant, device: FakeKettle, setup_integration
+) -> None:
+    await hass.services.async_call(
+        NUMBER_DOMAIN,
+        SERVICE_SET_VALUE,
+        {ATTR_ENTITY_ID: f"number.{PREFIX}_heat_temperature", ATTR_VALUE: 70},
+        blocking=True,
+    )
+
+    await setup_integration.runtime_data.async_refresh()
+    assert hass.states.get(f"number.{PREFIX}_heat_temperature").state == "70"
+
+    device.state[(2, 4)] = 85  # heated to 85 °C from the Mi Home app
+    await setup_integration.runtime_data.async_refresh()
+    assert hass.states.get(f"number.{PREFIX}_heat_temperature").state == "85"
 
 
 async def test_stop_button(hass: HomeAssistant, device: FakeKettle) -> None:

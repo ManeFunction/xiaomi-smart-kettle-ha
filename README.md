@@ -85,7 +85,7 @@ Do not copy the whole repository into `custom_components`, and do not add an ext
 
 After setup, open the kettle device in Home Assistant. Its entities show the current and heat temperature, the status, the keep-warm settings and diagnostic information.
 
-The **Boil**, **Heat** and **Stop** buttons start and stop those modes from Home Assistant. **Heat** heats the water to the heat temperature. Boiling does not change it, so the next **Heat** after a **Boil** heats to your setting again. Both buttons send the current keep-warm settings along with the command.
+The **Boil**, **Heat** and **Stop** buttons start and stop those modes from Home Assistant. **Heat** heats the water to the heat temperature. Changing the heat temperature, on its slider or on the Kettle thermostat, doesn't start the kettle: the new value is sent with the next **Heat**. Boiling does not change it, so the next **Heat** after a **Boil** heats to your setting again. Both buttons send the current keep-warm settings along with the command.
 
 The buttons have been confirmed to work on the test device. Try them on your own kettle before using them in automations. Do not run the kettle unattended, and do not bypass its built-in safety mechanisms.
 

@@ -51,7 +51,9 @@ class KettleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         return self.kettle.heat_target
 
     async def async_set_heat_target(self, value: int) -> None:
-        await self._async_run(self.kettle.set_heat_target, value)
+        """Set the heat target; the kettle gets it with the next Heat."""
+        self.kettle.set_heat_target(value)
+        self.async_update_listeners()
 
     async def async_start_heat(self) -> None:
         await self._async_run(self.kettle.start_heat)

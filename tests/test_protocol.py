@@ -227,3 +227,13 @@ def test_heat_refuses_when_heat_target_is_unknown(device: FakeKettle) -> None:
 
     assert err.value.missing == ["target_temperature"]
     assert device.sent("set_properties") == []
+
+
+def test_set_heat_target_sends_nothing(device: FakeKettle, kettle: Kettle) -> None:
+    kettle.read()
+
+    kettle.set_heat_target(70)
+    kettle.read()
+
+    assert device.sent("set_properties") == []
+    assert kettle.heat_target == 70
