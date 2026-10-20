@@ -12,14 +12,14 @@ All notable changes to this project are documented in this file. Commits follow 
 * **water_heater:** add a Keep warm temperature water heater for the keep-warm settings: turning it on and off sets the Keep warm switch, its target is the keep-warm temperature (40–90 °C), and it shows that temperature instead of the water temperature, so its Apple Home tile differs from the kettle's
 * **water_heater:** add a Kettle water heater entity for Home Assistant's water heater card and the HomeKit bridge: it shows the water temperature and status, its target is the heat temperature (40–99 °C), turning it on starts Heat and turning it off stops the kettle
 * **sensor:** expose the kettle status as an enum sensor with translated states (standby, heating, boiling, cooling down, keeping warm)
-* **switch:** move the remember-temperature, boiling notification, keep-warm notification and do-not-disturb switches to the device's Configuration section, which also keeps them off auto-generated dashboards and out of the HomeKit bridge by default
+* **switch:** move the remember-temperature, boiling notification, keep warm notification and do-not-disturb switches to the device's Configuration section, which also keeps them off auto-generated dashboards and out of the HomeKit bridge by default
 
 ### Bug Fixes
 
 * **number:** changing the heat temperature no longer starts heating: writing the kettle's target temperature made it heat, so the value is now kept in Home Assistant and sent with the next Heat, while a new target the kettle reports in heat mode (e.g. from Mi Home) is still picked up
 * show the result of a change right away instead of after the next poll: a second change within 10 s used to wait for the debounced refresh, and the Home app's half-degree dial values now snap to the whole degree the kettle got (halves round up)
 * **number:** rename "Target temperature" to "Heat temperature", since it is the temperature the Heat button heats to (entity IDs of existing installs are unchanged)
-* **switch:** rename "Boiling reminder" and "Keep-warm reminder" to "Boiling notification" and "Keep-warm notification", which is what they control (entity IDs of existing installs are unchanged)
+* **switch:** rename "Boiling reminder" and "Keep-warm reminder" to "Boiling notification" and "Keep warm notification", which is what they control (entity IDs of existing installs are unchanged)
 * keep the heat target when Boil runs, so the next Heat heats to the heat temperature instead of 99 °C and the heat temperature entity no longer jumps to 99
 * re-read the keep-warm settings from the kettle right before Heat and Boil, and refuse to start instead of sending invented defaults when a setting is unknown
 * raise readable, translated errors when a command fails because the kettle is unreachable or rejects it

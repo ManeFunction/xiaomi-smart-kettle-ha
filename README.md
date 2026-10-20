@@ -27,7 +27,7 @@ The integration reads the kettle's Xiaomi miIO properties and creates these enti
 | Keep-warm time | How long to keep the water warm (60–1440 min) |
 | Warming time | Warming time reported by the kettle |
 | Kettle lifted | Whether the kettle is off its base |
-| Other settings | Boiling and keep-warm notifications in the Mi Home app, remember temperature after lifting, do not disturb |
+| Other settings | Boiling and keep warm notifications in the Mi Home app, remember temperature after lifting, do not disturb |
 | Boil | Button that starts boiling |
 | Heat | Button that heats the water to the heat temperature |
 | Stop | Button that stops heating or boiling |
