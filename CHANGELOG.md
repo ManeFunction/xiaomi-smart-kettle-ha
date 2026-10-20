@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file. Commits follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/), and the versions follow [Semantic Versioning](https://semver.org/).
 
-## 0.3.0 (2026-10-19)
+## 0.3.0 (2026-10-20)
 
 ### Features
 
