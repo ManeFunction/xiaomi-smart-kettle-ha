@@ -154,3 +154,24 @@ async def test_keep_warm_set_temperature(
         [{"did": "2-6", "siid": 2, "piid": 6, "value": 65}]
     ]
     assert hass.states.get(KEEP_WARM_ID).attributes["current_temperature"] == 65
+
+
+async def test_changes_show_right_away(hass: HomeAssistant, device: FakeKettle) -> None:
+    # The refresh after a command is debounced for 10 s, so the second change
+    # must show without waiting for it.
+    for value in (60, 72.5):
+        await _call(
+            hass,
+            SERVICE_SET_TEMPERATURE,
+            {ATTR_TEMPERATURE: value},
+            entity_id=KEEP_WARM_ID,
+        )
+
+    state = hass.states.get(KEEP_WARM_ID)
+    assert state.attributes["temperature"] == 73
+    assert state.attributes["current_temperature"] == 73
+
+    await _call(hass, SERVICE_SET_TEMPERATURE, {ATTR_TEMPERATURE: 71})
+    await _call(hass, SERVICE_SET_TEMPERATURE, {ATTR_TEMPERATURE: 75})
+
+    assert hass.states.get(ENTITY_ID).attributes["temperature"] == 75

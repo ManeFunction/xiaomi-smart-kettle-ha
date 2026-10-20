@@ -104,7 +104,7 @@ The settings under *Configuration* (notifications, do not disturb, remember temp
 > [!NOTE]
 > Apple Home has no kettle device type, so the tile shows **Heat** whenever the kettle is heating, boiling, cooling down or keeping warm. The mapping was checked against the HomeKit Bridge of Home Assistant 2026.10. Whether the Home app's dial offers the full 40–99 °C range has not been checked on an iPhone yet.
 >
-> The bridge gives every thermostat a 0.1° step, so the Home app's dial can stop on half degrees such as 72.5°. The kettle only takes whole degrees: the integration rounds the value, and the tile shows the rounded temperature after the next update.
+> The bridge gives every thermostat a 0.1° step, so the Home app's dial can stop on half degrees such as 72.5°. The kettle only takes whole degrees: the integration rounds halves up (72.5° becomes 73°), and the tile shows the rounded temperature right away.
 
 ## Troubleshooting
 

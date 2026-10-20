@@ -14,6 +14,7 @@ All notable changes to this project are documented in this file. Commits follow 
 
 ### Bug Fixes
 
+* show the result of a change right away instead of after the next poll: a second change within 10 s used to wait for the debounced refresh, and the Home app's half-degree dial values now snap to the whole degree the kettle got (halves round up)
 * **number:** rename "Target temperature" to "Heat temperature", since it is the temperature the Heat button heats to (entity IDs of existing installs are unchanged)
 * **switch:** rename "Boiling reminder" and "Keep-warm reminder" to "Boiling notification" and "Keep-warm notification", which is what they control (entity IDs of existing installs are unchanged)
 * keep the heat target when Boil runs, so the next Heat heats to the heat temperature instead of 99 °C and the heat temperature entity no longer jumps to 99

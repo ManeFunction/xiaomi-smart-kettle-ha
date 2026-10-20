@@ -44,7 +44,7 @@ class KettleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             ) from err
 
     async def async_set_properties(self, values: Mapping[str, Any]) -> None:
-        await self._async_run(self.kettle.write, values)
+        await self._async_run(self.kettle.write, values, written=values)
 
     @property
     def heat_target(self) -> int | None:
@@ -62,8 +62,19 @@ class KettleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def async_stop(self) -> None:
         await self._async_run(self.kettle.stop)
 
-    async def _async_run(self, command: Callable[..., None], *args: Any) -> None:
-        """Run a kettle command in the executor, then refresh the state."""
+    async def _async_run(
+        self,
+        command: Callable[..., None],
+        *args: Any,
+        written: Mapping[str, Any] | None = None,
+    ) -> None:
+        """Run a kettle command in the executor, show its result, then refresh.
+
+        The refresh is debounced for 10 s, so a second change within that time
+        would only show at the next poll. Showing the written values right away
+        also replaces a half degree from the Home app's dial with the rounded
+        value the kettle got.
+        """
         try:
             await self.hass.async_add_executor_job(command, *args)
         except DeviceException as err:
@@ -84,4 +95,7 @@ class KettleCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 translation_key="state_unknown",
                 translation_placeholders={"properties": ", ".join(err.missing)},
             ) from err
+        if written:
+            self.data = {**self.data, **written}
+        self.async_update_listeners()
         await self.async_request_refresh()

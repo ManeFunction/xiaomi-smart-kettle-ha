@@ -1,3 +1,4 @@
+import math
 from typing import Any
 
 from homeassistant.components.water_heater import (
@@ -86,7 +87,7 @@ class KettleHeatWaterHeater(KettleWaterHeater):
         return self.coordinator.heat_target
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
-        await self.coordinator.async_set_heat_target(round(kwargs[ATTR_TEMPERATURE]))
+        await self.coordinator.async_set_heat_target(_whole(kwargs[ATTR_TEMPERATURE]))
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         await self.coordinator.async_start_heat()
@@ -122,7 +123,7 @@ class KettleKeepWarmWaterHeater(KettleWaterHeater):
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
         await self.coordinator.async_set_properties(
-            {"keep_warm_temperature": round(kwargs[ATTR_TEMPERATURE])}
+            {"keep_warm_temperature": _whole(kwargs[ATTR_TEMPERATURE])}
         )
 
     async def async_turn_on(self, **kwargs: Any) -> None:
@@ -130,3 +131,12 @@ class KettleKeepWarmWaterHeater(KettleWaterHeater):
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         await self.coordinator.async_set_properties({"auto_keep_warm": False})
+
+
+def _whole(temperature: float) -> int:
+    """Round to the whole degrees the kettle takes, halves up.
+
+    The Home app's dial moves in half degrees, and round() would send 72.5 to 72
+    but 73.5 to 74.
+    """
+    return math.floor(temperature + 0.5)
