@@ -99,7 +99,7 @@
         }
       },
       "keep_warm": {
-        "name": "Keep kettle warm",
+        "name": "Auto keep warm",
         "state": {
           "off": "Off",
           "on": "On"

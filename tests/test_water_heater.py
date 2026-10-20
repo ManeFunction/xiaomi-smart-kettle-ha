@@ -109,7 +109,7 @@ async def _call(
     )
 
 
-KEEP_WARM_ID = "water_heater.xiaomi_smart_kettle_2_pro_keep_kettle_warm"
+KEEP_WARM_ID = "water_heater.xiaomi_smart_kettle_2_pro_auto_keep_warm"
 
 
 async def test_keep_warm_state(hass: HomeAssistant, device: FakeKettle) -> None:
